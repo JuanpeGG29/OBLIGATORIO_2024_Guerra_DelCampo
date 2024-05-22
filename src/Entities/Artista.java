@@ -5,7 +5,7 @@ import TADs.LinkedList.MyLinkedListImpl;
 
 public class Artista {
    private String name;
-   private MyLinkedList<Album> albumes;
+   private MyLinkedList<String> albumes;
    private MyLinkedList<Cancion> canciones;
 
     public Artista(String name) {
@@ -23,11 +23,11 @@ public class Artista {
         this.name = name;
     }
 
-    public MyLinkedList<Album> getAlbumes() {
+    public MyLinkedList<String> getAlbumes() {
         return albumes;
     }
 
-    public void setAlbumes(MyLinkedList<Album> albumes) {
+    public void setAlbumes(MyLinkedList<String> albumes) {
         this.albumes = albumes;
     }
 

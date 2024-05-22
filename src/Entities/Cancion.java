@@ -16,7 +16,7 @@ public class Cancion {
     private int popularity;
     private boolean is_explicit;
     private int duration_ms;
-    private Album album_name;
+    private String album_name;
     private LocalDate album_release_date;
     private float danceability;
     private float energy;
@@ -31,7 +31,7 @@ public class Cancion {
     private float tempo;
     private int time_signature;
 
-    public Cancion(String spotify_id, String titulo, int daily_rank, int weekly_rank, String country, LocalDate snapshot_date, int popularity, boolean is_explicit, int duration_ms, Album album_name, LocalDate album_release_date, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int time_signature) {
+    public Cancion(String spotify_id, String titulo, int daily_rank, int weekly_rank, String country, LocalDate snapshot_date, int popularity, boolean is_explicit, int duration_ms, String album_name, LocalDate album_release_date, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int time_signature) {
         this.spotify_id = spotify_id;
         this.titulo = titulo;
         this.artistas = new MyLinkedListImpl<>();
@@ -130,11 +130,11 @@ public class Cancion {
         this.duration_ms = duration_ms;
     }
 
-    public Album getAlbum_name() {
+    public String getAlbum_name() {
         return album_name;
     }
 
-    public void setAlbum_name(Album album_name) {
+    public void setAlbum_name(String album_name) {
         this.album_name = album_name;
     }
 
