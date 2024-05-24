@@ -31,7 +31,7 @@ public class Cancion {
     private float tempo;
     private int time_signature;
 
-    public Cancion(String spotify_id, String titulo, int daily_rank, int weekly_rank, String country, LocalDate snapshot_date, int popularity, boolean is_explicit, int duration_ms, String album_name, LocalDate album_release_date, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int time_signature) {
+    public Cancion(String spotify_id, String titulo, MyLinkedList<Artista> artistas, int daily_rank, int weekly_rank, String country, LocalDate snapshot_date, int popularity, boolean is_explicit, int duration_ms, String album_name, LocalDate album_release_date, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int time_signature) {
         this.spotify_id = spotify_id;
         this.titulo = titulo;
         this.artistas = new MyLinkedListImpl<>();
@@ -248,5 +248,35 @@ public class Cancion {
 
     public void setArtistas(MyLinkedList<Artista> artistas) {
         this.artistas = artistas;
+    }
+
+    @Override
+    public String toString() {
+        return "Cancion{" +
+                "spotify_id='" + spotify_id + '\'' +
+                ", titulo='" + titulo + '\'' +
+                ", artistas=" + artistas +
+                ", daily_rank=" + daily_rank +
+                ", weekly_rank=" + weekly_rank +
+                ", country='" + country + '\'' +
+                ", snapshot_date=" + snapshot_date +
+                ", popularity=" + popularity +
+                ", is_explicit=" + is_explicit +
+                ", duration_ms=" + duration_ms +
+                ", album_name='" + album_name + '\'' +
+                ", album_release_date=" + album_release_date +
+                ", danceability=" + danceability +
+                ", energy=" + energy +
+                ", key=" + key +
+                ", loudness=" + loudness +
+                ", mode=" + mode +
+                ", speechiness=" + speechiness +
+                ", acousticness=" + acousticness +
+                ", instrumentalness=" + instrumentalness +
+                ", liveness=" + liveness +
+                ", valence=" + valence +
+                ", tempo=" + tempo +
+                ", time_signature=" + time_signature +
+                '}';
     }
 }
