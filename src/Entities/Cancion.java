@@ -1,7 +1,6 @@
 package Entities;
 
 import TADs.LinkedList.MyLinkedList;
-import TADs.LinkedList.MyLinkedListImpl;
 
 import java.time.LocalDate;
 
@@ -10,6 +9,7 @@ public class Cancion {
     private String titulo;
     private MyLinkedList<Artista> artistas;
     private int daily_rank;
+    private int daily_movement;
     private int weekly_rank;
     private String country;
     private LocalDate snapshot_date;
@@ -31,11 +31,12 @@ public class Cancion {
     private float tempo;
     private int time_signature;
 
-    public Cancion(String spotify_id, String titulo, MyLinkedList<Artista> artistas, int daily_rank, int weekly_rank, String country, LocalDate snapshot_date, int popularity, boolean is_explicit, int duration_ms, String album_name, LocalDate album_release_date, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int time_signature) {
+    public Cancion(String spotify_id, String titulo, MyLinkedList<Artista> artistas, int daily_rank, int daily_movement, int weekly_rank, String country, LocalDate snapshot_date, int popularity, boolean is_explicit, int duration_ms, String album_name, LocalDate album_release_date, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int time_signature) {
         this.spotify_id = spotify_id;
         this.titulo = titulo;
-        this.artistas = new MyLinkedListImpl<>();
+        this.artistas = artistas;
         this.daily_rank = daily_rank;
+        this.daily_movement = daily_movement;
         this.weekly_rank = weekly_rank;
         this.country = country;
         this.snapshot_date = snapshot_date;
@@ -56,6 +57,14 @@ public class Cancion {
         this.valence = valence;
         this.tempo = tempo;
         this.time_signature = time_signature;
+    }
+
+    public int getDaily_movement() {
+        return daily_movement;
+    }
+
+    public void setDaily_movement(int daily_movement) {
+        this.daily_movement = daily_movement;
     }
 
     public String getSpotify_id() {
@@ -257,6 +266,7 @@ public class Cancion {
                 ", titulo='" + titulo + '\'' +
                 ", artistas=" + artistas +
                 ", daily_rank=" + daily_rank +
+                ", daily_movement=" + daily_movement +
                 ", weekly_rank=" + weekly_rank +
                 ", country='" + country + '\'' +
                 ", snapshot_date=" + snapshot_date +

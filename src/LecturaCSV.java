@@ -19,7 +19,6 @@ public class LecturaCSV {
 
         try (CSVReader reader = new CSVReader(new FileReader(archivoCSV))) {
             String[] nextLine;
-            // Leer la primera línea (cabeceras) y descartarla
             reader.readNext();
 
             while ((nextLine = reader.readNext()) != null) {
@@ -30,16 +29,15 @@ public class LecturaCSV {
             e.printStackTrace();
         }
 
-        // Imprimir las primeras 20 canciones para verificar
+        // Imprimir las primeras 20 canciones para probar que onda
         int limite = Math.min(20, canciones.size());
         for (int i = 0; i < limite; i++) {
             Cancion cancion = canciones.get(i);
             System.out.println(cancion.toString());
         }
-
     }
     private static Cancion crearInstanciaCancion(String[] linea) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
         MyLinkedList<Artista> artistas = new MyLinkedListImpl<>();
         String[] artistasNombres = linea[2].split(", ");
@@ -47,31 +45,54 @@ public class LecturaCSV {
             artistas.add(new Artista(nombre));
         }
 
+        String country;
+        if (linea[6].isEmpty()) {
+            country = "global";
+        } else {
+            country = linea[6];
+        }
+        // Verificar si el campo 'snapshot_date' está vacío antes de parsearlo
+        LocalDate snapshotDate;
+        if (linea[7].isEmpty()) {
+            snapshotDate = null; // O asigna un valor por defecto si prefieres
+        } else {
+            snapshotDate = LocalDate.parse(linea[7], formatter);
+        }
+
+        // Verificar si el campo 'album_release_date' está vacío antes de parsearlo
+        LocalDate albumReleaseDate;
+        if (linea[12].isEmpty()) {
+            albumReleaseDate = null; // O asigna un valor por defecto si prefieres
+        } else {
+            albumReleaseDate = LocalDate.parse(linea[12], formatter);
+        }
+
         return new Cancion(
                 linea[0],  // spotify_id
                 linea[1],  // titulo
                 artistas,  // artistas
                 Integer.parseInt(linea[3]),  // daily_rank
-                Integer.parseInt(linea[4]),  // weekly_rank
-                linea[5],  // country
-                LocalDate.parse(linea[6], formatter),  // snapshot_date
-                Integer.parseInt(linea[7]),  // popularity
-                Boolean.parseBoolean(linea[8]),  // is_explicit
-                Integer.parseInt(linea[9]),  // duration_ms
-                linea[10],  // album_name
-                LocalDate.parse(linea[11], formatter),  // album_release_date
-                Float.parseFloat(linea[12]),  // danceability
-                Float.parseFloat(linea[13]),  // energy
-                Integer.parseInt(linea[14]),  // key
-                Float.parseFloat(linea[15]),  // loudness
-                Integer.parseInt(linea[16]),  // mode
-                Float.parseFloat(linea[17]),  // speechiness
-                Float.parseFloat(linea[18]),  // acousticness
-                Float.parseFloat(linea[19]),  // instrumentalness
-                Float.parseFloat(linea[20]),  // liveness
-                Float.parseFloat(linea[21]),  // valence
-                Float.parseFloat(linea[22]),  // tempo
-                Integer.parseInt(linea[23])   // time_signature
+                Integer.parseInt(linea[4]),  // daily_movement (nuevo campo)
+                Integer.parseInt(linea[5]),  // weekly_rank
+                country,  // country
+                snapshotDate,  // snapshot_date
+                Integer.parseInt(linea[8]),  // popularity
+                Boolean.parseBoolean(linea[9]),  // is_explicit
+                Integer.parseInt(linea[10]),  // duration_ms
+                linea[11],  // album_name
+                albumReleaseDate,  // album_release_date
+                Float.parseFloat(linea[13]),  // danceability
+                Float.parseFloat(linea[14]),  // energy
+                Integer.parseInt(linea[15]),  // key
+                Float.parseFloat(linea[16]),  // loudness
+                Integer.parseInt(linea[17]),  // mode
+                Float.parseFloat(linea[18]),  // speechiness
+                Float.parseFloat(linea[19]),  // acousticness
+                Float.parseFloat(linea[20]),  // instrumentalness
+                Float.parseFloat(linea[21]),  // liveness
+                Float.parseFloat(linea[22]),  // valence
+                Float.parseFloat(linea[23]),  // tempo
+                Integer.parseInt(linea[24])   // time_signature
         );
     }
 }
