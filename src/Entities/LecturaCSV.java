@@ -16,11 +16,15 @@ public class LecturaCSV {
     public static void leerArchivo(String archivoCSV, MusicStorage musicStorage, ArtistStorage artistStorage) {
         try (CSVReader reader = new CSVReader(new FileReader(archivoCSV))) {
             String[] nextLine;
-            reader.readNext(); // Saltar el encabezado
+            reader.readNext();
 
             while ((nextLine = reader.readNext()) != null) {
                 Cancion cancion = crearInstanciaCancion(nextLine);
                 musicStorage.agregarCancion(cancion);
+                for (int i=0; i<cancion.getArtistas().size(); i++){
+
+
+                }
                 for (Artista artista : cancion.getArtistas()) {
                     ArtistStorage.agregarArtista(artista);
                 }
