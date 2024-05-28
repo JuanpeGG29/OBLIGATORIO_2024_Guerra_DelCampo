@@ -54,7 +54,7 @@ public class LecturaCSV {
         // Verificar si el campo 'snapshot_date' está vacío antes de parsearlo
         LocalDate snapshotDate;
         if (linea[7].isEmpty()) {
-            snapshotDate = null; // O asigna un valor por defecto si prefieres
+            snapshotDate = null;
         } else {
             snapshotDate = LocalDate.parse(linea[7], formatter);
         }
@@ -62,7 +62,7 @@ public class LecturaCSV {
         // Verificar si el campo 'album_release_date' está vacío antes de parsearlo
         LocalDate albumReleaseDate;
         if (linea[12].isEmpty()) {
-            albumReleaseDate = null; // O asigna un valor por defecto si prefieres
+            albumReleaseDate = null;
         } else {
             albumReleaseDate = LocalDate.parse(linea[12], formatter);
         }
