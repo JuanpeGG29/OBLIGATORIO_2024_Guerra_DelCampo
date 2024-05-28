@@ -13,5 +13,10 @@ public class Artista {
         this.name = name;
     }
 
-
+    @Override
+    public String toString() {
+        return "Artista{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

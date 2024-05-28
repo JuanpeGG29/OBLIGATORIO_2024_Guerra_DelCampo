@@ -1,5 +1,5 @@
-import Entities.Artista;
-import Entities.Cancion;
+package Entities;
+
 import TADs.LinkedList.MyLinkedList;
 import TADs.LinkedList.MyLinkedListImpl;
 import com.opencsv.CSVReader;
@@ -9,70 +9,44 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-
 
 public class LecturaCSV {
-    public static void main(String[] args) {
-        String archivoCSV = "sources/universal_top_spotify_songs.csv";
-        LinkedList<Cancion> canciones = new LinkedList<>(); //yo creo que a futuro es un hash o algo asi
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
+    public static void leerArchivo(String archivoCSV, MusicStorage musicStorage, ArtistStorage artistStorage) {
         try (CSVReader reader = new CSVReader(new FileReader(archivoCSV))) {
             String[] nextLine;
-            reader.readNext();
+            reader.readNext(); // Saltar el encabezado
 
             while ((nextLine = reader.readNext()) != null) {
                 Cancion cancion = crearInstanciaCancion(nextLine);
-                canciones.add(cancion);
+                musicStorage.agregarCancion(cancion);
+                for (Artista artista : cancion.getArtistas()) {
+                    ArtistStorage.agregarArtista(artista);
+                }
             }
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
-
-        // Imprimir las primeras 20 canciones para probar que onda
-        int limite = Math.min(20, canciones.size());
-        for (int i = 0; i < limite; i++) {
-            Cancion cancion = canciones.get(i);
-            System.out.println(cancion.toString());
-        }
     }
-    private static Cancion crearInstanciaCancion(String[] linea) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
+    private static Cancion crearInstanciaCancion(String[] linea) {
         MyLinkedList<Artista> artistas = new MyLinkedListImpl<>();
         String[] artistasNombres = linea[2].split(", ");
         for (String nombre : artistasNombres) {
             artistas.add(new Artista(nombre));
         }
 
-        String country;
-        if (linea[6].isEmpty()) {
-            country = "global";
-        } else {
-            country = linea[6];
-        }
-        // Verificar si el campo 'snapshot_date' está vacío antes de parsearlo
-        LocalDate snapshotDate;
-        if (linea[7].isEmpty()) {
-            snapshotDate = null;
-        } else {
-            snapshotDate = LocalDate.parse(linea[7], formatter);
-        }
-
-        // Verificar si el campo 'album_release_date' está vacío antes de parsearlo
-        LocalDate albumReleaseDate;
-        if (linea[12].isEmpty()) {
-            albumReleaseDate = null;
-        } else {
-            albumReleaseDate = LocalDate.parse(linea[12], formatter);
-        }
+        String country = linea[6].isEmpty() ? "global" : linea[6];
+        LocalDate snapshotDate = linea[7].isEmpty() ? null : LocalDate.parse(linea[7], formatter);
+        LocalDate albumReleaseDate = linea[12].isEmpty() ? null : LocalDate.parse(linea[12], formatter);
 
         return new Cancion(
                 linea[0],  // spotify_id
                 linea[1],  // titulo
                 artistas,  // artistas
                 Integer.parseInt(linea[3]),  // daily_rank
-                Integer.parseInt(linea[4]),  // daily_movement (nuevo campo)
+                Integer.parseInt(linea[4]),  // daily_movement
                 Integer.parseInt(linea[5]),  // weekly_rank
                 country,  // country
                 snapshotDate,  // snapshot_date
