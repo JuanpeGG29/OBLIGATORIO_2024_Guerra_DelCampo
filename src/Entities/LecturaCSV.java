@@ -21,19 +21,16 @@ public class LecturaCSV {
             while ((nextLine = reader.readNext()) != null) {
                 Cancion cancion = crearInstanciaCancion(nextLine);
                 musicStorage.agregarCancion(cancion);
-                for (int i=0; i<cancion.getArtistas().size(); i++){
-
-
-                }
-                for (Artista artista : cancion.getArtistas()) {
-                    ArtistStorage.agregarArtista(artista);
+                for (int i = 0; i < cancion.getArtistas().size(); i++) {
+                    if (!artistStorage.contieneArtista(cancion.getArtistas().get(i).getName())){
+                        artistStorage.agregarArtista(cancion.getArtistas().get(i));
+                    }
                 }
             }
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
     }
-
     private static Cancion crearInstanciaCancion(String[] linea) {
         MyLinkedList<Artista> artistas = new MyLinkedListImpl<>();
         String[] artistasNombres = linea[2].split(", ");
