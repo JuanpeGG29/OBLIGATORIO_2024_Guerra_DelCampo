@@ -1,23 +1,24 @@
 package Entities;
 
+import TADs.LinkedList.MyLinkedListImpl;
+import TADs.LinkedList.MyList;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FechaCanciones implements Comparable<FechaCanciones> {
     private LocalDate fecha;
-    private List<Cancion> canciones;
+    private MyList<Cancion> canciones;
 
     public FechaCanciones(LocalDate fecha) {
         this.fecha = fecha;
-        this.canciones = new ArrayList<>();
+        this.canciones = new MyLinkedListImpl<>();
     }
 
     public LocalDate getFecha() {
         return fecha;
     }
 
-    public List<Cancion> getCanciones() {
+    public MyList<Cancion> getCanciones() {
         return canciones;
     }
 
