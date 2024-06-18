@@ -1,13 +1,20 @@
 package TADs.Hash;
 
-import TADs.ArrayList.MyArrayList;
+import TADs.LinkedList.MyList;
 
-public interface MyHash<K,V> {
-    void put(K key, V value);
-    V get (K key);
-    void delete(K key);
+public interface MyHash<Key, Value> {
+    void put(Key key, Value value);
+
+    Value get(Key key);
+
+    boolean contains(Key key);
+
+    void remove(Key key);
+
+    MyList<Key> keys();
+
+    MyList<Value> values();
+
     int size();
-    boolean isEmpty();
-    K keyListaKeys(int lugar);
-    MyArrayList<K> getListaDeKeys();
 }
+

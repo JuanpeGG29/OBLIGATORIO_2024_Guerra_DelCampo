@@ -1,19 +1,20 @@
 package Entities;
 
-import java.util.HashMap;
+import TADs.Hash.MyHash;
+import TADs.Hash.MyHashImpl;
 
 public class ArtistStorage {
-    private HashMap<String, Artista> artistasPorNombre; //asumo que los nombres de los artistas son unicos y esa sera mi key
+    private MyHash<String, Artista> artistasPorNombre; //asumo que los nombres de los artistas son unicos y esa sera mi key
 
     public ArtistStorage() {
-        this.artistasPorNombre = new HashMap<>();
+        this.artistasPorNombre = new MyHashImpl<>();
     }
 
     public void agregarArtista(Artista artista) {
-        artistasPorNombre.putIfAbsent(artista.getName(), artista);
+        artistasPorNombre.put(artista.getName(), artista);
     }
     public boolean contieneArtista(String nombre) {
-        return artistasPorNombre.containsKey(nombre);
+        return artistasPorNombre.contains(nombre);
     }
 
 }

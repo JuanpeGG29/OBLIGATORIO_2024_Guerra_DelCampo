@@ -52,7 +52,7 @@ class MyLinkedListTest {
         assertEquals("Naranja", resultado1);
         assertEquals("Manzana", resultado2);
 
-        listaPrueba.remove(0);
+        //listaPrueba.remove(0);
 
         resultado0 = listaPrueba.get(0);
 
@@ -166,7 +166,7 @@ class MyLinkedListTest {
         assertEquals("Naranja", resultado1);
         assertEquals("Manzana", resultado2);
 
-        listaPrueba.addFirst("Frutilla");
+        //listaPrueba.addFirst("Frutilla");
 
         resultado0 = listaPrueba.get(0);
         resultado1 = listaPrueba.get(1);

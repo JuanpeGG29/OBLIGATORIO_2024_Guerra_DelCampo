@@ -1,13 +1,13 @@
 package Entities;
 
-import TADs.LinkedList.MyLinkedList;
+import TADs.LinkedList.MyList;
 
 import java.time.LocalDate;
 
 public class Cancion {
     private String spotify_id;
     private String titulo;
-    private MyLinkedList<Artista> artistas;
+    private MyList<Artista> artistas;
     private int daily_rank;
     private int daily_movement;
     private int weekly_rank;
@@ -31,7 +31,7 @@ public class Cancion {
     private float tempo;
     private int time_signature;
 
-    public Cancion(String spotify_id, String titulo, MyLinkedList<Artista> artistas, int daily_rank, int daily_movement, int weekly_rank, String country, LocalDate snapshot_date, int popularity, boolean is_explicit, int duration_ms, String album_name, LocalDate album_release_date, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int time_signature) {
+    public Cancion(String spotify_id, String titulo, MyList<Artista> artistas, int daily_rank, int daily_movement, int weekly_rank, String country, LocalDate snapshot_date, int popularity, boolean is_explicit, int duration_ms, String album_name, LocalDate album_release_date, float danceability, float energy, int key, float loudness, int mode, float speechiness, float acousticness, float instrumentalness, float liveness, float valence, float tempo, int time_signature) {
         this.spotify_id = spotify_id;
         this.titulo = titulo;
         this.artistas = artistas;
@@ -251,11 +251,11 @@ public class Cancion {
         this.time_signature = time_signature;
     }
 
-    public MyLinkedList<Artista> getArtistas() {
+    public MyList<Artista> getArtistas() {
         return artistas;
     }
 
-    public void setArtistas(MyLinkedList<Artista> artistas) {
+    public void setArtistas(MyList<Artista> artistas) {
         this.artistas = artistas;
     }
 

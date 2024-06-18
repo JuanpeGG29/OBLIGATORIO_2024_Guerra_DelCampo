@@ -1,29 +1,41 @@
 package Entities;
 
-import java.time.LocalDate;
-import java.util.*;
+import TADs.BinarySearchTree.BinaryTree;
+import TADs.BinarySearchTree.SearchBinaryTreeImpl;
+import TADs.Hash.MyHash;
+import TADs.Hash.MyHashImpl;
 
 public class MusicStorage {
-    private HashMap<String, Cancion> cancionesPorID;
-    private TreeMap<LocalDate, List<Cancion>> cancionesPorFecha;
-    private HashMap<String, TreeMap<LocalDate, List<Cancion>>> cancionesPorPaisYFecha;
+    private MyHash<String, Cancion> cancionesPorID;
+    private BinaryTree<FechaCanciones> cancionesPorFecha;
+    private MyHash<String, BinaryTree<FechaCanciones>> cancionesPorPaisYFecha;
 
     public MusicStorage() {
-        this.cancionesPorID = new HashMap<>();
-        this.cancionesPorFecha = new TreeMap<>();
-        this.cancionesPorPaisYFecha = new HashMap<>();
+        this.cancionesPorID = new MyHashImpl<>();
+        this.cancionesPorFecha = new SearchBinaryTreeImpl<>();
+        this.cancionesPorPaisYFecha = new MyHashImpl<>();
     }
 
     public void agregarCancion(Cancion cancion) {
         cancionesPorID.put(cancion.getSpotify_id(), cancion);
 
-        cancionesPorFecha.putIfAbsent(cancion.getSnapshot_date(), new ArrayList<>());
-        cancionesPorFecha.get(cancion.getSnapshot_date()).add(cancion);
+        // Manejar cancionesPorFecha
+        FechaCanciones fechaCanciones = new FechaCanciones(cancion.getSnapshot_date());
+        if (!cancionesPorFecha.contains(fechaCanciones)) {
+            cancionesPorFecha.add(fechaCanciones);
+        }
+        FechaCanciones nodo = cancionesPorFecha.find(fechaCanciones);
+        nodo.agregarCancion(cancion);
 
-        cancionesPorPaisYFecha.putIfAbsent(cancion.getCountry(), new TreeMap<>());
-        TreeMap<LocalDate, List<Cancion>> fechas = cancionesPorPaisYFecha.get(cancion.getCountry());
-        fechas.putIfAbsent(cancion.getSnapshot_date(), new ArrayList<>());
-        fechas.get(cancion.getSnapshot_date()).add(cancion);
+        // Manejar cancionesPorPaisYFecha
+        if (!cancionesPorPaisYFecha.contains(cancion.getCountry())) {
+            cancionesPorPaisYFecha.put(cancion.getCountry(), new SearchBinaryTreeImpl<>());
+        }
+        BinaryTree<FechaCanciones> arbolFechas = cancionesPorPaisYFecha.get(cancion.getCountry());
+        if (!arbolFechas.contains(fechaCanciones)) {
+            arbolFechas.add(fechaCanciones);
+        }
+        FechaCanciones nodoPais = arbolFechas.find(fechaCanciones);
+        nodoPais.agregarCancion(cancion);
     }
-
 }

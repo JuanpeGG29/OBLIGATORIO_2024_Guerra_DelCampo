@@ -1,7 +1,7 @@
 package Entities;
 
-import TADs.LinkedList.MyLinkedList;
 import TADs.LinkedList.MyLinkedListImpl;
+import TADs.LinkedList.MyList;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -32,7 +32,7 @@ public class LecturaCSV {
         }
     }
     private static Cancion crearInstanciaCancion(String[] linea) {
-        MyLinkedList<Artista> artistas = new MyLinkedListImpl<>();
+        MyList<Artista> artistas = new MyLinkedListImpl<>();
         String[] artistasNombres = linea[2].split(", ");
         for (String nombre : artistasNombres) {
             artistas.add(new Artista(nombre));

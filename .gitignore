@@ -3,6 +3,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+
 ### Eclipse ###
 .apt_generated
 .classpath
@@ -27,6 +28,13 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Custom ###
+# Ignore the libs directory
+/libs/
+
+# Ignore the sources directory
+/sources/
 
 ### Custom ###
 # Ignore the libs directory

@@ -1,147 +1,235 @@
 package TADs.LinkedList;
 
-public class MyLinkedListImpl<T> implements MyLinkedList<T> {
-    private NodeLinkedList<T> head; /* Primer elemento de la lista */
-    private int size;
+import TADs.Queue.MyQueue;
+import TADs.Queue.exceptions.EmptyQueueException;
+import TADs.Stack.MyStack;
+import TADs.Stack.exceptions.EmptyStackException;
+
+public class MyLinkedListImpl<T> implements MyList<T>, MyQueue<T>, MyStack<T> {
+
+    private Node<T> first;
+
+    private Node<T> last;
 
     public MyLinkedListImpl() {
-        this.head = head;
-        this.size = 0;
+        this.first = null;
+        this.last = null;
     }
 
-    public MyLinkedListImpl(T valor) {
-        this.head = new NodeLinkedList(valor);
-        this.size = 1;
-    }
 
     @Override
     public void add(T value) {
-        if (this.head == null) {
-            this.head = new NodeLinkedList(value);
+        addToTheEnd(value);
+    }
+
+    private void addToBeginning(T value) {
+        if (value != null) {
+
+            Node<T> elementToAdd = new Node<>(value);
+
+            if (this.first == null) { // si la lista es vacia
+
+                this.first = elementToAdd;
+                this.last = elementToAdd;
+
+            } else { // en caso de no ser vacia se agrega al comienzo
+
+                elementToAdd.setNext(this.first);
+                this.first = elementToAdd;
+            }
+
         } else {
-            NodeLinkedList<T> tmp = this.head;
-            while (tmp.getNext() != null) {
-                tmp = tmp.getNext();
+            // si el elemento es vacio se ignora
+        }
+    }
+
+    private void addToTheEnd(T value) {
+        if (value != null) {
+
+            Node<T> elementToAdd = new Node<>(value);
+
+            if (this.first == null) { // si la lista es vacia
+
+                this.first = elementToAdd;
+                this.last = elementToAdd;
+
+            } else { // en caso de no ser vacia se agrega al final
+
+                this.last.setNext(elementToAdd);
+                this.last = elementToAdd;
             }
-            NodeLinkedList<T> newNode = new NodeLinkedList(value);
-            tmp.setNext(newNode);
-        }
-        this.size++;
-    }
-    @Override
-    public void addpos(int position, T value) {
-        // Manejo de casos especiales
-        if (position == 0) {
-            addFirst(value);
-            return;
-        }
-        if (position >= size()) {
-            addLast(value);
-            return;
-        }
 
-        NodeLinkedList<T> newNode = new NodeLinkedList<>(value);
-        NodeLinkedList<T> tmp = head;
-        for (int i = 0; i < position - 1; i++) {
-            tmp = tmp.getNext();
-        }
-        newNode.setNext(tmp.getNext());
-        tmp.setNext(newNode);
-    }
-
-
-    @Override
-    public boolean remove(int position) {
-        //Retorna true si borra el elemento o retorna false si no lo encuentra
-        int count = 0;
-
-        //Cuando la posicion excede el tamaño de la lista
-        if(position > size()){
-            return false;
-        }
-
-        //Cuando la posicion que se desea borrar es la cero
-        if(position == 0){
-            this.head = this.head.getNext();
-            this.size--;
-            return true;
-        } else{
-            //Cuando la posicion que se desea borrar es cualquiera de la lista
-            NodeLinkedList<T> tmp = this.head;
-            while(count < position - 1){
-                tmp = tmp.getNext();
-                count ++;
-            }
-            tmp.setNext(tmp.getNext().getNext());
-            this.size--;
-            return true;
+        } else {
+            // si el elemento es vacio se ignora
         }
     }
 
-    @Override
     public T get(int position) {
-        //Cuando la posicion excede el tamaño de la lista
-        if(position > size()) {
-            return null;
-        } else{
-            NodeLinkedList<T> tmp = this.head;
-            while (position > 0){
-                tmp = tmp.getNext();
-                position = position - 1;
-            }
-            if (tmp == null){
-                return null;
-            }
-            return tmp.getValue();
+        T valueToReturn = null;
+        int tempPosition = 0;
+        Node<T> temp = this.first;
+
+        // Se busca el nodo que corresponde con la posicion
+        while (temp != null && tempPosition != position) {
+
+            temp = temp.getNext();
+            tempPosition++;
+
         }
-    }
 
-    @Override
-    public int size() {
-        return this.size;
-    }
+        // si se encontro la posicion se retorna el valor
+        // en caso que se haya llegado al final y no se llego a la posicion se retorna null
+        if (tempPosition == position) {
 
-    @Override
-    public boolean isEmpty() {
-        if(this.head == null){
-            return true;
-        } else{
-            return false;
+
+            valueToReturn = temp.getValue();
+
         }
+
+        return valueToReturn;
     }
 
-    @Override
     public boolean contains(T value) {
-        NodeLinkedList<T> tmp = this.head;
-        while (tmp != null){
-            if (tmp.getValue().equals(value)){
-                return true;
+        boolean contains = false;
+        Node<T> temp = this.first;
+
+        while (temp != null && !temp.getValue().equals(value)) {
+
+            temp = temp.getNext();
+
+        }
+
+        if (temp != null) { // Si no se llego al final de la lista, se encontro el valor
+
+            contains = true;
+
+        }
+
+        return contains;
+    }
+
+    public void remove(T value) {
+        Node<T> beforeSearchValue = null;
+        Node<T> searchValue = this.first;
+
+        // Busco el elemento a eliminar teniendo en cuenta mantener una referencia al elemento anterior
+        while (searchValue != null && !searchValue.getValue().equals(value)) {
+
+            beforeSearchValue = searchValue;
+            searchValue = searchValue.getNext();
+
+        }
+
+        if (searchValue != null) { // si encontre el elemento a eliminar
+
+            // Verifico si es el primer valor (caso borde) y no es el ultimo
+            if (searchValue == this.first && searchValue != this.last) {
+
+                Node<T> temp = this.first;
+                this.first = this.first.getNext(); // salteo el primero
+
+                temp.setNext(null); // quito referencia del elemento eliminado al siguiente.
+
+                // Verifico si es el primer valor (caso borde) y no el primero
+            } else if (searchValue == this.last && searchValue != this.first) {
+
+                beforeSearchValue.setNext(null);
+                this.last = beforeSearchValue;
+
+                // Si es el primer valor y el ultimo (lista de un solo valor)
+            } else if (searchValue == this.last && searchValue == this.first) {
+
+                this.first = null;
+                this.last = null;
+
+            } else { // resto de los casos
+
+                beforeSearchValue.setNext(searchValue.getNext());
+                searchValue.setNext(null);
+
             }
-            tmp = tmp.getNext();
+
+        } else {
+
+            // Si no es encuentra el valor a eliminar no se realiza nada
+
         }
-        return false;
+
+    }
+
+    private T removeLast() { // esta operación remueve el último elemento y retorna el elemento eliminado
+        T valueToRemove = null;
+
+        if (this.last != null) {
+            valueToRemove = this.last.getValue();
+
+            remove(valueToRemove);
+        }
+
+        return valueToRemove;
+    }
+
+    public int size() {
+        int size = 0;
+
+        Node<T> temp = this.first;
+
+        while (temp != null) {
+
+            temp = temp.getNext();
+            size++;
+
+        }
+
+        return size;
     }
 
     @Override
-    public void addFirst(T value) {
+    public Node<T> getFirst() {
+        return null;
+    }
 
-        NodeLinkedList<T> tmp = new NodeLinkedList<>(value); //Este es el nuevo primer nodo
+    // Operaciones particulares a Queue
 
-        //Caso en el que la LinkedList está vacía
-        if(this.head == null){
-            this.head = tmp;
-        } else{
-            //Resto de los casos, donde ya hay elementos en la lista
-            NodeLinkedList<T> tmp2 = this.head; //Este es el primer nodo que ahora pasa a ser el segundo nodo
-            tmp.setNext(tmp2); //Al nuevo nodo le seteo como proximo el que era primero antes, o sea, el segundo actualmente
-            this.head = tmp;
+    public void enqueue(T value) {
+        addToBeginning(value);
+    }
+
+    public T dequeue() throws EmptyQueueException {
+        if (this.last == null) { // si la queue esta vacia
+
+            throw new EmptyQueueException();
         }
+
+        return removeLast();
     }
 
-    @Override
-    public void addLast(T value) {
-        add(value);
+    // Operaciones particulares a Stack
+
+    public void push(T value) {
+        addToTheEnd(value);
     }
 
+    public T pop() throws EmptyStackException {
+        if (this.last == null) { // si la pila esta vacia
 
+            throw new EmptyStackException();
+        }
+
+        return removeLast();
+    }
+
+    public T peek() {
+        T valueToReturn = null;
+
+        if (this.last != null) {
+            valueToReturn = this.last.getValue();
+        }
+
+        return valueToReturn;
+    }
+
+    public boolean isEmpty() {
+        return (this.first == null && this.last==null);
+    }
 }
