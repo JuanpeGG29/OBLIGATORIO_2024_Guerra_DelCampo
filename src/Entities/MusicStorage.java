@@ -16,6 +16,30 @@ public class MusicStorage {
         this.cancionesPorPaisYFecha = new MyHashImpl<>();
     }
 
+    public MyHash<String, Cancion> getCancionesPorID() {
+        return cancionesPorID;
+    }
+
+    public void setCancionesPorID(MyHash<String, Cancion> cancionesPorID) {
+        this.cancionesPorID = cancionesPorID;
+    }
+
+    public BinaryTree<FechaCanciones> getCancionesPorFecha() {
+        return cancionesPorFecha;
+    }
+
+    public void setCancionesPorFecha(BinaryTree<FechaCanciones> cancionesPorFecha) {
+        this.cancionesPorFecha = cancionesPorFecha;
+    }
+
+    public MyHash<String, BinaryTree<FechaCanciones>> getCancionesPorPaisYFecha() {
+        return cancionesPorPaisYFecha;
+    }
+
+    public void setCancionesPorPaisYFecha(MyHash<String, BinaryTree<FechaCanciones>> cancionesPorPaisYFecha) {
+        this.cancionesPorPaisYFecha = cancionesPorPaisYFecha;
+    }
+
     public void agregarCancion(Cancion cancion) {
         cancionesPorID.put(cancion.getSpotify_id(), cancion);
 
