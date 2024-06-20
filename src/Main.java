@@ -1,23 +1,42 @@
 import Entities.*;
 import Exceptions.NoHayCancionEnEstaFecha;
+import Exceptions.NoHayCancionesParaElPais;
+import Exceptions.NoHayCancionesParaPaisYFecha;
+import TADs.BinarySearchTree.BinaryTree;
+import TADs.Hash.MyHash;
+import TADs.Hash.MyHashImpl;
+import TADs.Heap.MyHeap;
+import TADs.Heap.MyHeapImpl;
+import TADs.Heap.exceptions.EmptyHeapException;
 import TADs.LinkedList.MyLinkedListImpl;
 import TADs.LinkedList.MyList;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
-    public static void top10PaisFecha(MusicStorage musicStorage, String pais, LocalDate fecha) throws NoHayCancionEnEstaFecha {
+    public static void top10PaisFecha(MusicStorage musicStorage, String pais, LocalDate fecha) throws NoHayCancionEnEstaFecha, NoHayCancionesParaPaisYFecha, NoHayCancionesParaElPais {
 
         FechaCanciones cancionesFechaIndicadaTemp = new FechaCanciones(fecha);
         FechaCanciones cancionesFechaIndicada = musicStorage.getCancionesPorFecha().find(cancionesFechaIndicadaTemp);
 
         if (cancionesFechaIndicada == null){
             throw new NoHayCancionEnEstaFecha();
+        }
+
+        if (!musicStorage.getCancionesPorPaisYFecha().contains(pais)) {
+            throw new NoHayCancionesParaElPais();
+        }
+
+        BinaryTree<FechaCanciones> cancionesPorFechaParaPais = musicStorage.getCancionesPorPaisYFecha().get(pais);
+        FechaCanciones cancionesParaPaisYFecha = cancionesPorFechaParaPais.find(cancionesFechaIndicadaTemp);
+
+        if (cancionesParaPaisYFecha == null) {
+            throw new NoHayCancionesParaPaisYFecha();
         }
 
         MyList<Cancion> cancionesPaisYfecha = new MyLinkedListImpl<>();
@@ -41,17 +60,60 @@ public class Main {
 
         for (int i = 0; i < listaOrdenada.size(); i++) {
             System.out.println(listaOrdenada.get(i));
-            for (int j = 0; j < listaOrdenada.get(i).getArtistas().size(); j++) {
-                System.out.println(listaOrdenada.get(i).getArtistas().get(j));
-            }
         }
     }
 
 
+    public static void top5masAparicionesTOP50 (MusicStorage musicStorage, LocalDate fecha) throws NoHayCancionEnEstaFecha {
+        FechaCanciones cancionesFechaIndicadaTemp = new FechaCanciones(fecha);
+        FechaCanciones cancionesFechaIndicada = musicStorage.getCancionesPorFecha().find(cancionesFechaIndicadaTemp);
 
+        if (cancionesFechaIndicada == null){
+            throw new NoHayCancionEnEstaFecha();
+        }
 
+        // Crear un HashMap para contar las apariciones de cada canción
+        MyHash<Cancion, Integer> aparicionesCanciones = new MyHashImpl<>();
 
+        // Recorrer la lista de canciones y contar apariciones
+        for (int i = 0; i < cancionesFechaIndicada.getCanciones().size(); i++) {
+            Cancion cancion = cancionesFechaIndicada.getCanciones().get(i);
+            if (cancion.getDaily_rank() <= 50) { // Considerar solo las que están en el top 50
+                int count = 0;
+                if (aparicionesCanciones.contains(cancion)) {
+                    count = aparicionesCanciones.get(cancion);
+                }
+                aparicionesCanciones.put(cancion, count + 1);
+            }
+        }
 
+        // Usar un MyHeap para encontrar las top 5 canciones con más apariciones
+        MyHeap<CancionEntry> maxHeap = new MyHeapImpl<>(aparicionesCanciones.size());
+
+        // Añadir todas las entradas del HashMap al maxHeap
+        MyList<Cancion> keys = aparicionesCanciones.keys();
+        for (int i = 0; i < keys.size(); i++) {
+            Cancion key = keys.get(i);
+            Map.Entry<Cancion, Integer> entry = new HashMap.SimpleEntry<>(key, aparicionesCanciones.get(key));
+            maxHeap.insert(new CancionEntry(entry));
+        }
+
+        // Obtener las top 5 canciones con más apariciones
+        List<CancionEntry> top5 = new ArrayList<>();
+        for (int i = 0; i < 5 && !maxHeap.isEmpty(); i++) {
+            try {
+                top5.add(maxHeap.delete());
+            } catch (EmptyHeapException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        // Imprimir el resultado
+        for (CancionEntry entry : top5) {
+            System.out.println("Canción: " + entry.getEntry().getKey().getTitulo() + ", Apariciones: " + entry.getEntry().getValue());
+        }
+
+    }
 
 
     public static void main(String[] args) {
@@ -83,7 +145,13 @@ public class Main {
                     String fecha = scanner.nextLine();
                     LocalDate fechaEnFormato = LocalDate.parse(fecha, formatter);
                     try {
-                        top10PaisFecha(musicStorage, pais, fechaEnFormato);
+                        try {
+                            top10PaisFecha(musicStorage, pais, fechaEnFormato);
+                        } catch (NoHayCancionesParaPaisYFecha e) {
+                            System.out.println("No hay canciones para la fecha y el pais indicado");;
+                        } catch (NoHayCancionesParaElPais e) {
+                            System.out.println("No hay canciones para el pais indicado");;
+                        }
                     } catch (NoHayCancionEnEstaFecha e) {
                         System.out.println("No hay canciones en la fecha indicada");;
                     }
@@ -91,8 +159,12 @@ public class Main {
                 case 2:
                     System.out.println("Ingrese la fecha (MM/DD/YYYY):");
                     String fecha2 = scanner.nextLine();
-                    // Llama a la función que maneja esta consulta
-                    // ejemplo: mostrarTop5CancionesEnMasTop50(musicStorage, fecha2);
+                    LocalDate fechaEnFormato2 = LocalDate.parse(fecha2, formatter);
+                    try {
+                        top5masAparicionesTOP50(musicStorage, fechaEnFormato2);
+                    } catch (NoHayCancionEnEstaFecha e) {
+                        System.out.println("No existen canciones para la fecha indicada");;
+                    }
                     break;
                 case 3:
                     System.out.println("Ingrese la fecha de inicio (MM/DD/YYYY):");

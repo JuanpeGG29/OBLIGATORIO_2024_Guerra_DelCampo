@@ -261,8 +261,15 @@ public class Cancion {
 
     @Override
     public String toString() {
+        StringBuilder artistasStr = new StringBuilder();
+        for (int i = 0; i < this.getArtistas().size(); i++) {
+            if (i > 0) {
+                artistasStr.append(", ");
+            }
+            artistasStr.append(this.getArtistas().get(i).getName());
+        }
         return "daily_rank=" + daily_rank +
                 ", titulo='" + titulo + '\'' +
-                ", artistas=" + artistas;
+                ", artistas=[" + artistasStr.toString() + "]";
     }
 }
