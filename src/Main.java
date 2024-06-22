@@ -11,12 +11,13 @@ import TADs.LinkedList.MyList;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class Main {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
-
+    private static final DateTimeFormatter inputFormatter = DateTimeFormatter.ISO_LOCAL_DATE; // Formato YYYY-MM-DD
     public static void top10PaisFecha(MusicStorage musicStorage, String pais, LocalDate fecha) throws NoHayCancionEnEstaFecha, NoHayCancionesParaPaisYFecha, NoHayCancionesParaElPais {
         FechaCanciones cancionesFechaIndicadaTemp = new FechaCanciones(fecha);
         FechaCanciones cancionesFechaIndicada = musicStorage.getCancionesPorFecha().find(cancionesFechaIndicadaTemp);
@@ -242,7 +243,6 @@ public class Main {
         LecturaCSV.leerArchivo("sources/universal_top_spotify_songs.csv", musicStorage, artistStorage);
 
 
-
         boolean continuar = true;
         while (continuar) {
             System.out.println("Seleccione una consulta:");
@@ -258,27 +258,31 @@ public class Main {
 
             switch (opcion) {
                 case 1:
-                    System.out.println("Ingrese el país:");
-                    String pais = scanner.nextLine();
-                    System.out.println("Ingrese la fecha (MM/DD/YYYY):");
-                    String fecha = scanner.nextLine();
-                    LocalDate fechaEnFormato = LocalDate.parse(fecha, formatter);
+                System.out.println("Ingrese el país:");
+                String pais = scanner.nextLine();
+                System.out.println("Ingrese la fecha (YYYY-MM-DD):");
+                String fecha = scanner.nextLine();
+
+                try {
+                    LocalDate fechaEnFormato = LocalDate.parse(fecha, inputFormatter);
+
                     try {
-                        try {
-                            top10PaisFecha(musicStorage, pais, fechaEnFormato);
-                        } catch (NoHayCancionesParaPaisYFecha e) {
-                            System.out.println("No hay canciones para la fecha y el pais indicado");;
-                        } catch (NoHayCancionesParaElPais e) {
-                            System.out.println("No hay canciones para el pais indicado");;
-                        }
-                    } catch (NoHayCancionEnEstaFecha e) {
-                        System.out.println("No hay canciones en la fecha indicada");;
+                        top10PaisFecha(musicStorage, pais, fechaEnFormato);
+                    } catch (NoHayCancionesParaPaisYFecha e) {
+                        System.out.println("No hay canciones para la fecha y el pais indicado");
+                    } catch (NoHayCancionesParaElPais e) {
+                        System.out.println("No hay canciones para el pais indicado");
                     }
-                    break;
+                } catch (DateTimeParseException e) {
+                    System.out.println("Formato de fecha inválido");
+                } catch (NoHayCancionEnEstaFecha e) {
+                    System.out.println("No hay canciones en la fecha indicada");
+                }
+                break;
                 case 2:
-                    System.out.println("Ingrese la fecha (MM/DD/YYYY):");
+                    System.out.println("Ingrese la fecha (YYYY-MM-DD):");
                     String fecha2 = scanner.nextLine();
-                    LocalDate fechaEnFormato2 = LocalDate.parse(fecha2, formatter);
+                    LocalDate fechaEnFormato2 = LocalDate.parse(fecha2, inputFormatter);
                     try {
                         top5masAparicionesTOP50(musicStorage, fechaEnFormato2);
                     } catch (NoHayCancionEnEstaFecha e) {
@@ -286,12 +290,12 @@ public class Main {
                     }
                     break;
                 case 3:
-                    System.out.println("Ingrese la fecha de inicio (MM/DD/YYYY):");
+                    System.out.println("Ingrese la fecha de inicio (YYYY-MM-DD):");
                     String fechaInicio = scanner.nextLine();
-                    System.out.println("Ingrese la fecha de fin (MM/DD/YYYY):");
+                    System.out.println("Ingrese la fecha de fin (YYYY-MM-DD):");
                     String fechaFin = scanner.nextLine();
-                    LocalDate fechaInicioEnFormato = LocalDate.parse(fechaInicio, formatter);
-                    LocalDate fechaFinEnFormato = LocalDate.parse(fechaFin, formatter);
+                    LocalDate fechaInicioEnFormato = LocalDate.parse(fechaInicio, inputFormatter);
+                    LocalDate fechaFinEnFormato = LocalDate.parse(fechaFin, inputFormatter);
                     try {
                         top7ArtistasRangoDeFechas(musicStorage, fechaInicioEnFormato, fechaFinEnFormato);
                     } catch (RangoInvalido e) {
@@ -305,9 +309,9 @@ public class Main {
                     String artista = scanner.nextLine();
                     System.out.println("Ingrese pais:");
                     String pais1 = scanner.nextLine();
-                    System.out.println("Ingrese la fecha (MM/DD/YYYY):");
+                    System.out.println("Ingrese la fecha (YYYY-MM-DD):");
                     String fecha3 = scanner.nextLine();
-                    LocalDate fecha3EnFormato = LocalDate.parse(fecha3, formatter);
+                    LocalDate fecha3EnFormato = LocalDate.parse(fecha3, inputFormatter);
                     try {
                         cantidadAparicionesArtista(musicStorage, artistStorage, artista, pais1, fecha3EnFormato);
                     } catch (NoHayCancionEnEstaFecha e) {
@@ -326,12 +330,12 @@ public class Main {
                     System.out.println("Ingrese el tempo máximo:");
                     float tempoMax = scanner.nextFloat();
                     scanner.nextLine(); // Consume newline
-                    System.out.println("Ingrese la fecha de inicio (MM/DD/YYYY):");
+                    System.out.println("Ingrese la fecha de inicio (YYYY-MM-DD):");
                     String fechaInicio2 = scanner.nextLine();
-                    System.out.println("Ingrese la fecha de fin (MM/DD/YYYYY):");
+                    System.out.println("Ingrese la fecha de fin (YYYYY-MM-DD):");
                     String fechaFin2 = scanner.nextLine();
-                    LocalDate fechaInicio2EnFormato = LocalDate.parse(fechaInicio2, formatter);
-                    LocalDate fechaFin2EnFormato = LocalDate.parse(fechaFin2, formatter);
+                    LocalDate fechaInicio2EnFormato = LocalDate.parse(fechaInicio2, inputFormatter);
+                    LocalDate fechaFin2EnFormato = LocalDate.parse(fechaFin2, inputFormatter);
                     try {
                         cantidadCancionesPorTempoYRangoDeFechas(musicStorage, tempoMin, tempoMax, fechaInicio2EnFormato, fechaFin2EnFormato);
                     } catch (NoHayCancionesParaEsteRangoDeFechas e) {

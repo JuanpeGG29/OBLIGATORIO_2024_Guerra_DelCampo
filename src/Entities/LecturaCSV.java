@@ -37,10 +37,26 @@ public class LecturaCSV {
         for (String nombre : artistasNombres) {
             artistas.add(new Artista(nombre));
         }
+        String country;
+        if (linea[6].isEmpty()) {
+            country = "global";
+        } else {
+            country = linea[6];
+        }
 
-        String country = linea[6].isEmpty() ? "global" : linea[6];
-        LocalDate snapshotDate = linea[7].isEmpty() ? null : LocalDate.parse(linea[7], formatter);
-        LocalDate albumReleaseDate = linea[12].isEmpty() ? null : LocalDate.parse(linea[12], formatter);
+        LocalDate snapshotDate;
+        if (linea[7].isEmpty()) {
+            snapshotDate = null;
+        } else {
+            snapshotDate = LocalDate.parse(linea[7], formatter);
+        }
+
+        LocalDate albumReleaseDate;
+        if (linea[12].isEmpty()) {
+            albumReleaseDate = null;
+        } else {
+            albumReleaseDate = LocalDate.parse(linea[12], formatter);
+        }
 
         return new Cancion(
                 linea[0],  // spotify_id
