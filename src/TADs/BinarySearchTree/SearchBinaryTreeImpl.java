@@ -129,4 +129,28 @@ public class SearchBinaryTreeImpl<T extends Comparable<T>> implements BinaryTree
         return colValues;
     }
 
+    public List<T> rangeSearch(T lowerBound, T upperBound) {
+        List<T> result = new ArrayList<>();
+        rangeSearchHelper(root, lowerBound, upperBound, result);
+        return result;
+    }
+
+    private void rangeSearchHelper(TreeNode<T> node, T lowerBound, T upperBound, List<T> result) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.getValue().compareTo(lowerBound) > 0) {
+            rangeSearchHelper(node.getLeft(), lowerBound, upperBound, result);
+        }
+
+        if (node.getValue().compareTo(lowerBound) >= 0 && node.getValue().compareTo(upperBound) <= 0) {
+            result.add(node.getValue());
+        }
+
+        if (node.getValue().compareTo(upperBound) < 0) {
+            rangeSearchHelper(node.getRight(), lowerBound, upperBound, result);
+        }
+    }
+
 }

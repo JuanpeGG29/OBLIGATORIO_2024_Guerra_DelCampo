@@ -18,4 +18,5 @@ public interface BinaryTree<T extends Comparable<T>> {
 
     List<T> inOrder();
 
+    List<T> rangeSearch(T lowerBound, T upperBound);
 }

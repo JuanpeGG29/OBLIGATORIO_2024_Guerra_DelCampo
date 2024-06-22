@@ -3,6 +3,7 @@ package Entities;
 import TADs.LinkedList.MyList;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Cancion {
     private String spotify_id;
@@ -257,6 +258,19 @@ public class Cancion {
 
     public void setArtistas(MyList<Artista> artistas) {
         this.artistas = artistas;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cancion cancion = (Cancion) o;
+        return Objects.equals(spotify_id, cancion.spotify_id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(spotify_id);
     }
 
     @Override

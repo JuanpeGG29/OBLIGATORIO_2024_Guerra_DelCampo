@@ -2,6 +2,7 @@ import Entities.*;
 import Exceptions.NoHayCancionEnEstaFecha;
 import Exceptions.NoHayCancionesParaElPais;
 import Exceptions.NoHayCancionesParaPaisYFecha;
+import Exceptions.RangoInvalido;
 import TADs.BinarySearchTree.BinaryTree;
 import TADs.Hash.MyHash;
 import TADs.Hash.MyHashImpl;
@@ -72,13 +73,12 @@ public class Main {
             throw new NoHayCancionEnEstaFecha();
         }
 
-        // Crear un HashMap para contar las apariciones de cada canción
+        // Hash para contar las apariciones de cada canción
         MyHash<Cancion, Integer> aparicionesCanciones = new MyHashImpl<>();
 
-        // Recorrer la lista de canciones y contar apariciones
         for (int i = 0; i < cancionesFechaIndicada.getCanciones().size(); i++) {
             Cancion cancion = cancionesFechaIndicada.getCanciones().get(i);
-            if (cancion.getDaily_rank() <= 50) { // Considerar solo las que están en el top 50
+            if (cancion.getDaily_rank() <= 50) {
                 int count = 0;
                 if (aparicionesCanciones.contains(cancion)) {
                     count = aparicionesCanciones.get(cancion);
@@ -87,10 +87,10 @@ public class Main {
             }
         }
 
-        // Usar un MyHeap para encontrar las top 5 canciones con más apariciones
+        //Heap para encontrar las top 5 canciones con más apariciones
         MyHeap<CancionEntry> maxHeap = new MyHeapImpl<>(aparicionesCanciones.size());
 
-        // Añadir todas las entradas del HashMap al maxHeap
+        // Añado todas las entradas del Hash al maxHeap
         MyList<Cancion> keys = aparicionesCanciones.keys();
         for (int i = 0; i < keys.size(); i++) {
             Cancion key = keys.get(i);
@@ -98,7 +98,7 @@ public class Main {
             maxHeap.insert(new CancionEntry(entry));
         }
 
-        // Obtener las top 5 canciones con más apariciones
+        // Obtengo las top 5 canciones con más apariciones
         List<CancionEntry> top5 = new ArrayList<>();
         for (int i = 0; i < 5 && !maxHeap.isEmpty(); i++) {
             try {
@@ -108,11 +108,62 @@ public class Main {
             }
         }
 
-        // Imprimir el resultado
         for (CancionEntry entry : top5) {
             System.out.println("Canción: " + entry.getEntry().getKey().getTitulo() + ", Apariciones: " + entry.getEntry().getValue());
         }
 
+    }
+
+    public static void top7ArtistasRangoDeFechas(MusicStorage musicStorage, ArtistStorage artistStorage, LocalDate fechaInicial, LocalDate fechaFinal) throws RangoInvalido, NoHayCancionEnEstaFecha {
+        if (fechaInicial.isAfter(fechaFinal)) {
+            throw new RangoInvalido();
+        }
+
+        MyHash<String, Integer> aparicionesArtistas = new MyHashImpl<>();
+
+        FechaCanciones fechaInicio = new FechaCanciones(fechaInicial);
+        FechaCanciones fechaFin = new FechaCanciones(fechaFinal);
+        List<FechaCanciones> fechasEnRango = musicStorage.getCancionesPorFecha().rangeSearch(fechaInicio, fechaFin);
+
+        if (fechasEnRango.isEmpty()) {
+            throw new NoHayCancionEnEstaFecha();
+        }
+
+        for (FechaCanciones fechaCanciones : fechasEnRango) {
+            MyList<Cancion> canciones = fechaCanciones.getCanciones();
+            for (int j = 0; j < canciones.size(); j++) {
+                Cancion cancion = canciones.get(j);
+                MyList<Artista> artistas = cancion.getArtistas();
+                for (int k = 0; k < artistas.size(); k++) {
+                    Artista artista = artistas.get(k);
+                    String nombreArtista = artista.getName();
+                    int count = 0;
+                    if (aparicionesArtistas.contains(nombreArtista)) {
+                        count = aparicionesArtistas.get(nombreArtista);
+                    }
+                    aparicionesArtistas.put(nombreArtista, count + 1);
+                }
+            }
+        }
+
+        // max heap para encontrar los top 7 artistas con más apariciones
+        MyHeap<ArtistaEntry> maxHeap = new MyHeapImpl<>(aparicionesArtistas.size());
+        MyList<String> artistasKeys = aparicionesArtistas.keys();
+        for (int i = 0; i < artistasKeys.size(); i++) {
+            String key = artistasKeys.get(i);
+            Map.Entry<String, Integer> entry = new HashMap.SimpleEntry<>(key, aparicionesArtistas.get(key));
+            maxHeap.insert(new ArtistaEntry(entry));
+        }
+
+        System.out.println("Top 7 artistas con más apariciones en el rango de fechas:");
+        for (int i = 0; i < 7 && !maxHeap.isEmpty(); i++) {
+            try {
+                ArtistaEntry entry = maxHeap.delete();
+                System.out.println("Artista: " + entry.getEntry().getKey() + ", Apariciones: " + entry.getEntry().getValue());
+            } catch (EmptyHeapException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -171,8 +222,15 @@ public class Main {
                     String fechaInicio = scanner.nextLine();
                     System.out.println("Ingrese la fecha de fin (MM/DD/YYYY):");
                     String fechaFin = scanner.nextLine();
-                    // Llama a la función que maneja esta consulta
-                    // ejemplo: mostrarTop7ArtistasEnRangoFechas(musicStorage, fechaInicio, fechaFin);
+                    LocalDate fechaInicioEnFormato = LocalDate.parse(fechaInicio, formatter);
+                    LocalDate fechaFinEnFormato = LocalDate.parse(fechaFin, formatter);
+                    try {
+                        top7ArtistasRangoDeFechas(musicStorage, artistStorage, fechaInicioEnFormato, fechaFinEnFormato);
+                    } catch (RangoInvalido e) {
+                        System.out.println("La fecha inicial no puede ser posterior a la fecha final.");;
+                    } catch (NoHayCancionEnEstaFecha e) {
+                        System.out.println("No hay canciones en el rango de fechas indicado.");;
+                    }
                     break;
                 case 4:
                     System.out.println("Ingrese el nombre del artista:");
