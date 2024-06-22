@@ -10,9 +10,18 @@ public class ArtistStorage {
         this.artistasPorNombre = new MyHashImpl<>();
     }
 
+    public MyHash<String, Artista> getArtistasPorNombre() {
+        return artistasPorNombre;
+    }
+
+    public void setArtistasPorNombre(MyHash<String, Artista> artistasPorNombre) {
+        this.artistasPorNombre = artistasPorNombre;
+    }
+
     public void agregarArtista(Artista artista) {
         artistasPorNombre.put(artista.getName(), artista);
     }
+
     public boolean contieneArtista(String nombre) {
         return artistasPorNombre.contains(nombre);
     }

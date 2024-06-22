@@ -1,8 +1,5 @@
 import Entities.*;
-import Exceptions.NoHayCancionEnEstaFecha;
-import Exceptions.NoHayCancionesParaElPais;
-import Exceptions.NoHayCancionesParaPaisYFecha;
-import Exceptions.RangoInvalido;
+import Exceptions.*;
 import TADs.BinarySearchTree.BinaryTree;
 import TADs.Hash.MyHash;
 import TADs.Hash.MyHashImpl;
@@ -21,7 +18,6 @@ public class Main {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     public static void top10PaisFecha(MusicStorage musicStorage, String pais, LocalDate fecha) throws NoHayCancionEnEstaFecha, NoHayCancionesParaPaisYFecha, NoHayCancionesParaElPais {
-
         FechaCanciones cancionesFechaIndicadaTemp = new FechaCanciones(fecha);
         FechaCanciones cancionesFechaIndicada = musicStorage.getCancionesPorFecha().find(cancionesFechaIndicadaTemp);
 
@@ -114,7 +110,7 @@ public class Main {
 
     }
 
-    public static void top7ArtistasRangoDeFechas(MusicStorage musicStorage, ArtistStorage artistStorage, LocalDate fechaInicial, LocalDate fechaFinal) throws RangoInvalido, NoHayCancionEnEstaFecha {
+    public static void top7ArtistasRangoDeFechas(MusicStorage musicStorage, LocalDate fechaInicial, LocalDate fechaFinal) throws RangoInvalido, NoHayCancionEnEstaFecha {
         if (fechaInicial.isAfter(fechaFinal)) {
             throw new RangoInvalido();
         }
@@ -123,7 +119,7 @@ public class Main {
 
         FechaCanciones fechaInicio = new FechaCanciones(fechaInicial);
         FechaCanciones fechaFin = new FechaCanciones(fechaFinal);
-        List<FechaCanciones> fechasEnRango = musicStorage.getCancionesPorFecha().rangeSearch(fechaInicio, fechaFin);
+        List<FechaCanciones> fechasEnRango = musicStorage.getCancionesPorFecha().rangeSearch(fechaInicio, fechaFin);//primo
 
         if (fechasEnRango.isEmpty()) {
             throw new NoHayCancionEnEstaFecha();
@@ -166,6 +162,78 @@ public class Main {
         }
     }
 
+
+    public static void cantidadAparicionesArtista (MusicStorage musicStorage, ArtistStorage artistStorage, String nombreArtista, String pais, LocalDate fecha) throws NoHayCancionEnEstaFecha, NoHayCancionesParaElPais, NoExisteArtista, NoHayCancionesParaPaisYFecha {
+        FechaCanciones cancionesFechaIndicadaTemp = new FechaCanciones(fecha);
+        FechaCanciones cancionesFechaIndicada = musicStorage.getCancionesPorFecha().find(cancionesFechaIndicadaTemp);
+
+        if (cancionesFechaIndicada == null){
+            throw new NoHayCancionEnEstaFecha();
+        }
+
+        if (!musicStorage.getCancionesPorPaisYFecha().contains(pais)) {
+            throw new NoHayCancionesParaElPais();
+        }
+
+        Artista artista = artistStorage.getArtistasPorNombre().get(nombreArtista);
+
+        if (artista == null){
+            throw new NoExisteArtista();
+        }
+
+        BinaryTree<FechaCanciones> cancionesPorFechaParaPais = musicStorage.getCancionesPorPaisYFecha().get(pais);
+        FechaCanciones cancionesParaPaisYFecha = cancionesPorFechaParaPais.find(cancionesFechaIndicadaTemp);
+
+        if (cancionesParaPaisYFecha == null) {
+            throw new NoHayCancionesParaPaisYFecha();
+        }
+
+        MyList<Cancion> listaCanciones = cancionesParaPaisYFecha.getCanciones();
+
+        int contador = 0;
+        for (int i = 0; i < listaCanciones.size(); i++) {
+            for (int j = 0; j < listaCanciones.get(i).getArtistas().size(); j++) {
+                if (artista.equals(listaCanciones.get(i).getArtistas().get(j))){
+                    contador ++;
+                }
+            }
+        }
+
+        System.out.println(nombreArtista + ": " + contador);
+    }
+
+    public static void cantidadCancionesPorTempoYRangoDeFechas(MusicStorage musicStorage, float tempoMin, float tempoMax, LocalDate fechaInicial, LocalDate fechaFinal) throws NoHayCancionesParaEsteRangoDeFechas, RangoInvalido {
+        if (fechaInicial.isAfter(fechaFinal)) {
+            throw new RangoInvalido();
+        }
+
+        if (tempoMin > tempoMax){
+            throw new RangoInvalido();
+        }
+
+        FechaCanciones fechaInicio = new FechaCanciones(fechaInicial);
+        FechaCanciones fechaFin = new FechaCanciones(fechaFinal);
+
+        List<FechaCanciones> fechasEnRango = musicStorage.getCancionesPorFecha().rangeSearch(fechaInicio, fechaFin);
+
+        if (fechasEnRango.isEmpty()) {
+            throw new NoHayCancionesParaEsteRangoDeFechas();
+        }
+
+        int contador = 0;
+
+        for (FechaCanciones fechaCanciones : fechasEnRango) {
+            MyList<Cancion> canciones = fechaCanciones.getCanciones();
+            for (int i = 0; i < canciones.size(); i++) {
+                Cancion cancion = canciones.get(i);
+                if (cancion.getTempo() >= tempoMin && cancion.getTempo() <= tempoMax) {
+                    contador++;
+                }
+            }
+        }
+
+        System.out.println("Cantidad de canciones con tempo entre " + tempoMin + " y " + tempoMax + " en el rango de fechas: " + contador);
+    }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -225,7 +293,7 @@ public class Main {
                     LocalDate fechaInicioEnFormato = LocalDate.parse(fechaInicio, formatter);
                     LocalDate fechaFinEnFormato = LocalDate.parse(fechaFin, formatter);
                     try {
-                        top7ArtistasRangoDeFechas(musicStorage, artistStorage, fechaInicioEnFormato, fechaFinEnFormato);
+                        top7ArtistasRangoDeFechas(musicStorage, fechaInicioEnFormato, fechaFinEnFormato);
                     } catch (RangoInvalido e) {
                         System.out.println("La fecha inicial no puede ser posterior a la fecha final.");;
                     } catch (NoHayCancionEnEstaFecha e) {
@@ -235,10 +303,22 @@ public class Main {
                 case 4:
                     System.out.println("Ingrese el nombre del artista:");
                     String artista = scanner.nextLine();
+                    System.out.println("Ingrese pais:");
+                    String pais1 = scanner.nextLine();
                     System.out.println("Ingrese la fecha (MM/DD/YYYY):");
                     String fecha3 = scanner.nextLine();
-                    // Llama a la función que maneja esta consulta
-                    // ejemplo: mostrarCantidadAparicionesArtista(musicStorage, artista, fecha3);
+                    LocalDate fecha3EnFormato = LocalDate.parse(fecha3, formatter);
+                    try {
+                        cantidadAparicionesArtista(musicStorage, artistStorage, artista, pais1, fecha3EnFormato);
+                    } catch (NoHayCancionEnEstaFecha e) {
+                        System.out.println("No hay canciones en esta fecha");;
+                    } catch (NoHayCancionesParaElPais e) {
+                        System.out.println("No hay canciones para el pais");;
+                    } catch (NoExisteArtista e) {
+                        System.out.println("No se encuentra el artista indicado");;
+                    } catch (NoHayCancionesParaPaisYFecha e) {
+                        System.out.println("No hay canciones para el pais y fecha indicado");;
+                    }
                     break;
                 case 5:
                     System.out.println("Ingrese el tempo mínimo:");
@@ -250,8 +330,15 @@ public class Main {
                     String fechaInicio2 = scanner.nextLine();
                     System.out.println("Ingrese la fecha de fin (MM/DD/YYYYY):");
                     String fechaFin2 = scanner.nextLine();
-                    // Llama a la función que maneja esta consulta
-                    // ejemplo: mostrarCantidadCancionesConTempoEnRango(musicStorage, tempoMin, tempoMax, fechaInicio2, fechaFin2);
+                    LocalDate fechaInicio2EnFormato = LocalDate.parse(fechaInicio2, formatter);
+                    LocalDate fechaFin2EnFormato = LocalDate.parse(fechaFin2, formatter);
+                    try {
+                        cantidadCancionesPorTempoYRangoDeFechas(musicStorage, tempoMin, tempoMax, fechaInicio2EnFormato, fechaFin2EnFormato);
+                    } catch (NoHayCancionesParaEsteRangoDeFechas e) {
+                        System.out.println("No hay canciones para este rango de fechas");;
+                    } catch (RangoInvalido e) {
+                        System.out.println("Rango invalido");;
+                    }
                     break;
                 case 6:
                     continuar = false;
