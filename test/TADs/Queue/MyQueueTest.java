@@ -1,145 +1,74 @@
 package TADs.Queue;
 
 import TADs.Queue.exceptions.EmptyQueueException;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 
-class MyQueueTest {
-    MyQueueImpl<String> pruebaQueue = new MyQueueImpl<>();
+import static org.junit.Assert.*;
 
+public class MyQueueTest {
 
-    @org.junit.jupiter.api.Test
-    void isEmpty() {
-        pruebaQueue.enqueue("Frutilla");
-        pruebaQueue.enqueue("Naranja");
-        pruebaQueue.enqueue("Banana");
+    private MyQueue<Integer> queue;
 
-        boolean resultado = pruebaQueue.isEmpty();
-
-        assertEquals(false, resultado);
-
-        //System.out.println("La lista está vacia? " + pruebaQueue.isEmpty());
+    @Before
+    public void setUp() {
+        queue = new MyQueueImpl<>();
     }
 
+    @Test
+    public void testEnqueueAndDequeue() throws EmptyQueueException {
+        queue.enqueue(1);
+        queue.enqueue(2);
+        queue.enqueue(3);
 
-    @org.junit.jupiter.api.Test
-    void enqueue() {
-        pruebaQueue.enqueue("Frutilla");
-        pruebaQueue.enqueue("Naranja");
-        pruebaQueue.enqueue("Banana");
-
-        boolean resultado0 = pruebaQueue.contains("Frutilla");
-        boolean resultado1 = pruebaQueue.contains("Naranja");
-        boolean resultado2 = pruebaQueue.contains("Banana");
-
-        assertTrue(resultado0);
-        assertTrue(resultado1);
-        assertTrue(resultado2);
-
-        /*
-        System.out.println("La lista está vacia? " + pruebaQueue.isEmpty());
-        System.out.println(pruebaQueue.getFirst());
-        System.out.println("La lista tiene " + pruebaQueue.size() + " elementos");
-        */
+        assertEquals(Integer.valueOf(1), queue.dequeue());
+        assertEquals(Integer.valueOf(2), queue.dequeue());
+        assertEquals(Integer.valueOf(3), queue.dequeue());
     }
 
-
-    @org.junit.jupiter.api.Test
-    void dequeue() throws EmptyQueueException {
-        pruebaQueue.enqueue("Frutilla");
-        pruebaQueue.enqueue("Naranja");
-        pruebaQueue.enqueue("Banana");
-
-        boolean resultado0 = pruebaQueue.contains("Frutilla");
-        boolean resultado1 = pruebaQueue.contains("Naranja");
-        boolean resultado2 = pruebaQueue.contains("Banana");
-
-        assertTrue(resultado0);
-        assertTrue(resultado1);
-        assertTrue(resultado2);
-
-        pruebaQueue.dequeue();
-
-        resultado0 = pruebaQueue.contains("Naranja");
-        resultado1 = pruebaQueue.contains("Banana");
-
-        assertTrue(resultado0);
-        assertTrue(resultado1);
-
-        /*
-        System.out.println("La lista está vacia? " + pruebaQueue.isEmpty());
-        System.out.println(pruebaQueue.getFirst());
-        System.out.println("La lista tiene " + pruebaQueue.size() + " elementos");
-        pruebaQueue.dequeue();
-        System.out.println(pruebaQueue.getFirst());
-        pruebaQueue.dequeue();
-        System.out.println(pruebaQueue.getFirst());
-        */
+    @Test(expected = EmptyQueueException.class)
+    public void testDequeueEmptyQueue() throws EmptyQueueException {
+        queue.dequeue();
     }
 
+    @Test
+    public void testContains() {
+        queue.enqueue(1);
+        queue.enqueue(2);
 
-    @org.junit.jupiter.api.Test
-    void size() {
-        pruebaQueue.enqueue("Frutilla");
-        pruebaQueue.enqueue("Naranja");
-        pruebaQueue.enqueue("Banana");
-
-        assertEquals(3, pruebaQueue.size());
-
-        //System.out.println("La lista tiene " + pruebaQueue.size() + " elementos");
+        assertTrue(queue.contains(1));
+        assertTrue(queue.contains(2));
+        assertFalse(queue.contains(3));
     }
 
+    @Test
+    public void testGet() {
+        queue.enqueue(1);
+        queue.enqueue(2);
+        queue.enqueue(3);
 
-    @org.junit.jupiter.api.Test
-    void getFirst() throws EmptyQueueException {
-        pruebaQueue.enqueue("Frutilla");
-        pruebaQueue.enqueue("Naranja");
-        pruebaQueue.enqueue("Banana");
-
-        String resultado0 = pruebaQueue.getFirst();
-
-        assertEquals("Frutilla", resultado0);
-
-        /*
-        System.out.println(pruebaQueue.getFirst());
-        pruebaQueue.dequeue();
-        System.out.println(pruebaQueue.getFirst());
-        */
+        assertEquals(Integer.valueOf(1), queue.get(0));
+        assertEquals(Integer.valueOf(2), queue.get(1));
+        assertEquals(Integer.valueOf(3), queue.get(2));
     }
 
-
-    @org.junit.jupiter.api.Test
-    void getLast() {
-        pruebaQueue.enqueue("Frutilla");
-        pruebaQueue.enqueue("Naranja");
-        pruebaQueue.enqueue("Banana");
-
-        String resultado0 = pruebaQueue.getLast();
-
-        assertEquals("Banana", resultado0);
+    @Test
+    public void testSize() throws EmptyQueueException {
+        assertEquals(0, queue.size());
+        queue.enqueue(1);
+        assertEquals(1, queue.size());
+        queue.enqueue(2);
+        assertEquals(2, queue.size());
+        queue.dequeue();
+        assertEquals(1, queue.size());
     }
 
-
-    @org.junit.jupiter.api.Test
-    void contains() {
-        pruebaQueue.enqueue("Frutilla");
-        pruebaQueue.enqueue("Naranja");
-        pruebaQueue.enqueue("Banana");
-
-        boolean resultado0 = pruebaQueue.contains("Frutilla");
-        boolean resultado1 = pruebaQueue.contains("Naranja");
-        boolean resultado2 = pruebaQueue.contains("Banana");
-
-        assertTrue(resultado0);
-        assertTrue(resultado1);
-        assertTrue(resultado2);
-
-        /*
-        System.out.println(pruebaQueue.contains("Frutilla"));
-        System.out.println(pruebaQueue.contains("Banana"));
-        System.out.println(pruebaQueue.contains("Naranja"));
-        System.out.println(pruebaQueue.contains("Pera"));
-        */
+    @Test
+    public void testIsEmpty() throws EmptyQueueException {
+        assertTrue(queue.isEmpty());
+        queue.enqueue(1);
+        assertFalse(queue.isEmpty());
+        queue.dequeue();
+        assertTrue(queue.isEmpty());
     }
-
 }

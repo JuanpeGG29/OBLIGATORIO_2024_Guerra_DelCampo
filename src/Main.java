@@ -19,6 +19,10 @@ public class Main {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
     private static final DateTimeFormatter inputFormatter = DateTimeFormatter.ISO_LOCAL_DATE; // Formato YYYY-MM-DD
     public static void top10PaisFecha(MusicStorage musicStorage, String pais, LocalDate fecha) throws NoHayCancionEnEstaFecha, NoHayCancionesParaPaisYFecha, NoHayCancionesParaElPais {
+        long tiempoInicial, tiempoFinal, memoriaAntes, memoriaDespues, memoriaUsada, tiempoTotal;
+        memoriaAntes = Medicion.getMedidaMemoria();
+        tiempoInicial = Medicion.getMedidaTiempo();
+
         FechaCanciones cancionesFechaIndicadaTemp = new FechaCanciones(fecha);
         FechaCanciones cancionesFechaIndicada = musicStorage.getCancionesPorFecha().find(cancionesFechaIndicadaTemp);
 
@@ -59,10 +63,23 @@ public class Main {
         for (int i = 0; i < listaOrdenada.size(); i++) {
             System.out.println(listaOrdenada.get(i));
         }
+        tiempoFinal = Medicion.getMedidaTiempo();
+        memoriaDespues = Medicion.getMedidaMemoria();
+
+        tiempoTotal = (tiempoFinal - tiempoInicial) / 1_000_000; // Convertir a milisegundos
+        memoriaUsada = memoriaDespues - memoriaAntes;
+
+        System.out.println("Ejecución de consulta 1:");
+        System.out.println("Memoria utilizada: " + memoriaUsada + " bytes");
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " ms");
     }
 
 
     public static void top5masAparicionesTOP50 (MusicStorage musicStorage, LocalDate fecha) throws NoHayCancionEnEstaFecha {
+        long tiempoInicial, tiempoFinal, memoriaAntes, memoriaDespues, memoriaUsada, tiempoTotal;
+        memoriaAntes = Medicion.getMedidaMemoria();
+        tiempoInicial = Medicion.getMedidaTiempo();
+
         FechaCanciones cancionesFechaIndicadaTemp = new FechaCanciones(fecha);
         FechaCanciones cancionesFechaIndicada = musicStorage.getCancionesPorFecha().find(cancionesFechaIndicadaTemp);
 
@@ -109,9 +126,22 @@ public class Main {
             System.out.println("Canción: " + entry.getEntry().getKey().getTitulo() + ", Apariciones: " + entry.getEntry().getValue());
         }
 
+        tiempoFinal = Medicion.getMedidaTiempo();
+        memoriaDespues = Medicion.getMedidaMemoria();
+
+        tiempoTotal = (tiempoFinal - tiempoInicial) / 1_000_000; // Convertir a milisegundos
+        memoriaUsada = memoriaDespues - memoriaAntes;
+
+        System.out.println("Ejecución de consulta 2:");
+        System.out.println("Memoria utilizada: " + memoriaUsada + " bytes");
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " ms");
     }
 
     public static void top7ArtistasRangoDeFechas(MusicStorage musicStorage, LocalDate fechaInicial, LocalDate fechaFinal) throws RangoInvalido, NoHayCancionEnEstaFecha {
+        long tiempoInicial, tiempoFinal, memoriaAntes, memoriaDespues, memoriaUsada, tiempoTotal;
+        memoriaAntes = Medicion.getMedidaMemoria();
+        tiempoInicial = Medicion.getMedidaTiempo();
+
         if (fechaInicial.isAfter(fechaFinal)) {
             throw new RangoInvalido();
         }
@@ -161,10 +191,24 @@ public class Main {
                 e.printStackTrace();
             }
         }
+
+        tiempoFinal = Medicion.getMedidaTiempo();
+        memoriaDespues = Medicion.getMedidaMemoria();
+
+        tiempoTotal = (tiempoFinal - tiempoInicial) / 1_000_000; // Convertir a milisegundos
+        memoriaUsada = memoriaDespues - memoriaAntes;
+
+        System.out.println("Ejecución de consulta 3:");
+        System.out.println("Memoria utilizada: " + memoriaUsada + " bytes");
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " ms");
     }
 
 
     public static void cantidadAparicionesArtista (MusicStorage musicStorage, ArtistStorage artistStorage, String nombreArtista, String pais, LocalDate fecha) throws NoHayCancionEnEstaFecha, NoHayCancionesParaElPais, NoExisteArtista, NoHayCancionesParaPaisYFecha {
+        long tiempoInicial, tiempoFinal, memoriaAntes, memoriaDespues, memoriaUsada, tiempoTotal;
+        memoriaAntes = Medicion.getMedidaMemoria();
+        tiempoInicial = Medicion.getMedidaTiempo();
+
         FechaCanciones cancionesFechaIndicadaTemp = new FechaCanciones(fecha);
         FechaCanciones cancionesFechaIndicada = musicStorage.getCancionesPorFecha().find(cancionesFechaIndicadaTemp);
 
@@ -201,9 +245,23 @@ public class Main {
         }
 
         System.out.println(nombreArtista + ": " + contador);
+
+        tiempoFinal = Medicion.getMedidaTiempo();
+        memoriaDespues = Medicion.getMedidaMemoria();
+
+        tiempoTotal = (tiempoFinal - tiempoInicial) / 1_000_000; // Convertir a milisegundos
+        memoriaUsada = memoriaDespues - memoriaAntes;
+
+        System.out.println("Ejecución de consulta 4:");
+        System.out.println("Memoria utilizada: " + memoriaUsada + " bytes");
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " ms");
     }
 
     public static void cantidadCancionesPorTempoYRangoDeFechas(MusicStorage musicStorage, float tempoMin, float tempoMax, LocalDate fechaInicial, LocalDate fechaFinal) throws NoHayCancionesParaEsteRangoDeFechas, RangoInvalido {
+        long tiempoInicial, tiempoFinal, memoriaAntes, memoriaDespues, memoriaUsada, tiempoTotal;
+        memoriaAntes = Medicion.getMedidaMemoria();
+        tiempoInicial = Medicion.getMedidaTiempo();
+
         if (fechaInicial.isAfter(fechaFinal)) {
             throw new RangoInvalido();
         }
@@ -234,14 +292,42 @@ public class Main {
         }
 
         System.out.println("Cantidad de canciones con tempo entre " + tempoMin + " y " + tempoMax + " en el rango de fechas: " + contador);
+
+        tiempoFinal = Medicion.getMedidaTiempo();
+        memoriaDespues = Medicion.getMedidaMemoria();
+
+        tiempoTotal = (tiempoFinal - tiempoInicial) / 1_000_000; // Convertir a milisegundos
+        memoriaUsada = memoriaDespues - memoriaAntes;
+
+        System.out.println("Ejecución de consulta 5:");
+        System.out.println("Memoria utilizada: " + memoriaUsada + " bytes");
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " ms");
+
+
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        long memoriaInicialEjec = Medicion.getMedidaMemoria();
+        long tiempoInicialTotalEjec = Medicion.getMedidaTiempo();
+
+        long tiempoInicial, tiempoFinal, memoriaAntes, memoriaDespues, memoriaUsada, tiempoTotal;
+        memoriaAntes = Medicion.getMedidaMemoria();
+        tiempoInicial = Medicion.getMedidaTiempo();
+
         MusicStorage musicStorage = new MusicStorage();
         ArtistStorage artistStorage = new ArtistStorage();
         LecturaCSV.leerArchivo("sources/universal_top_spotify_songs.csv", musicStorage, artistStorage);
 
+        tiempoFinal = Medicion.getMedidaTiempo();
+        memoriaDespues = Medicion.getMedidaMemoria();
+
+        tiempoTotal = (tiempoFinal - tiempoInicial) / 1_000_000; // Convertir a milisegundos
+        memoriaUsada = memoriaDespues - memoriaAntes;
+
+        System.out.println("Ejecución de carga de datos");
+        System.out.println("Memoria utilizada: " + memoriaUsada + " bytes");
+        System.out.println("Tiempo de ejecución: " + tiempoTotal + " ms");
 
         boolean continuar = true;
         while (continuar) {
@@ -352,6 +438,16 @@ public class Main {
                     break;
             }
         }
+
+        long memoriaFinalEjec = Medicion.getMedidaMemoria();
+        long tiempoFinalTotalEjec = Medicion.getMedidaTiempo();
+
+        long memoriaUsadaTotal = memoriaFinalEjec - memoriaInicialEjec;
+        long tiempoTotalEjecucion = (tiempoFinalTotalEjec - tiempoInicialTotalEjec) / 1_000_000;
+
+        System.out.println("Ejecución completa del programa:");
+        System.out.println("Memoria total utilizada: " + memoriaUsadaTotal + " bytes");
+        System.out.println("Tiempo total de ejecución: " + tiempoTotal + " ms");
         scanner.close();
     }
 }

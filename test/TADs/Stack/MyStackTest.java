@@ -1,128 +1,68 @@
 package TADs.Stack;
 
 import TADs.Stack.exceptions.EmptyStackException;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.*;
 
-class MyStackTest {
-    MyStackImpl<String> myStackPrueba = new MyStackImpl<>();
+public class MyStackTest {
 
+    private MyStack<Integer> stack;
 
-    @org.junit.jupiter.api.Test
-    void isEmpty() {
-        myStackPrueba.push("Frutilla");
-        myStackPrueba.push("Naranja");
-        myStackPrueba.push("Banana");
-
-        boolean resultado = myStackPrueba.isEmpty();
-
-        assertEquals(false, resultado);
-
+    @Before
+    public void setUp() {
+        stack = new MyStackImpl<>();
     }
 
+    @Test
+    public void testPushAndPop() throws EmptyStackException {
+        stack.push(1);
+        stack.push(2);
+        stack.push(3);
 
-    @org.junit.jupiter.api.Test
-    void push() {
-        myStackPrueba.push("Frutilla");
-        myStackPrueba.push("Durazno");
-        myStackPrueba.push("Naranja");
-
-        boolean resultado0 = myStackPrueba.contains("Frutilla");
-        boolean resultado1 = myStackPrueba.contains("Durazno");
-        boolean resultado2 = myStackPrueba.contains("Naranja");
-
-        assertTrue(resultado0);
-        assertTrue(resultado1);
-        assertTrue(resultado2);
-
+        assertEquals(Integer.valueOf(3), stack.pop());
+        assertEquals(Integer.valueOf(2), stack.pop());
+        assertEquals(Integer.valueOf(1), stack.pop());
     }
 
-
-    @org.junit.jupiter.api.Test
-    void pop() throws EmptyStackException {
-        myStackPrueba.push("Frutilla");
-        myStackPrueba.push("Durazno");
-        myStackPrueba.push("Naranja");
-
-        boolean resultado0 = myStackPrueba.contains("Frutilla");
-        boolean resultado1 = myStackPrueba.contains("Durazno");
-        boolean resultado2 = myStackPrueba.contains("Naranja");
-
-        assertTrue(resultado0);
-        assertTrue(resultado1);
-        assertTrue(resultado2);
-
-        myStackPrueba.pop();
-
-        String nuevoResultado = myStackPrueba.top();
-
-        assertEquals("Durazno", nuevoResultado);
-
+    @Test(expected = EmptyStackException.class)
+    public void testPopEmptyStack() throws EmptyStackException {
+        stack.pop();
     }
 
+    @Test
+    public void testPeek() throws EmptyStackException {
+        stack.push(1);
+        stack.push(2);
 
-    @org.junit.jupiter.api.Test
-    void top() {
-        myStackPrueba.push("Frutilla");
-        myStackPrueba.push("Durazno");
-        myStackPrueba.push("Naranja");
-
-        String resultado = myStackPrueba.top();
-
-        assertEquals("Naranja", resultado);
+        assertEquals(Integer.valueOf(2), stack.peek());
+        stack.pop();
+        assertEquals(Integer.valueOf(1), stack.peek());
     }
 
-
-    @org.junit.jupiter.api.Test
-    void size() {
-        myStackPrueba.push("Frutilla");
-        myStackPrueba.push("Durazno");
-        myStackPrueba.push("Naranja");
-
-        assertEquals(3, myStackPrueba.size());
-
+    @Test(expected = EmptyStackException.class)
+    public void testPeekEmptyStack() throws EmptyStackException {
+        stack.peek();
     }
 
-
-    @org.junit.jupiter.api.Test
-    void makeEmpty() throws EmptyStackException {
-        myStackPrueba.push("Frutilla");
-        myStackPrueba.push("Durazno");
-        myStackPrueba.push("Naranja");
-
-        boolean resultado0 = myStackPrueba.contains("Frutilla");
-        boolean resultado1 = myStackPrueba.contains("Durazno");
-        boolean resultado2 = myStackPrueba.contains("Naranja");
-
-        assertTrue(resultado0);
-        assertTrue(resultado1);
-        assertTrue(resultado2);
-
-        myStackPrueba.makeEmpty();
-
-        boolean resultado = myStackPrueba.isEmpty();
-
-        assertTrue(resultado);
-
+    @Test
+    public void testSize() throws EmptyStackException {
+        assertEquals(0, stack.size());
+        stack.push(1);
+        assertEquals(1, stack.size());
+        stack.push(2);
+        assertEquals(2, stack.size());
+        stack.pop();
+        assertEquals(1, stack.size());
     }
 
-
-    @org.junit.jupiter.api.Test
-    void contains() {
-        myStackPrueba.push("Frutilla");
-        myStackPrueba.push("Durazno");
-        myStackPrueba.push("Naranja");
-
-        boolean resultado0 = myStackPrueba.contains("Frutilla");
-        boolean resultado1 = myStackPrueba.contains("Durazno");
-        boolean resultado2 = myStackPrueba.contains("Naranja");
-
-        assertTrue(resultado0);
-        assertTrue(resultado1);
-        assertTrue(resultado2);
-
-
+    @Test
+    public void testIsEmpty() throws EmptyStackException {
+        assertTrue(stack.isEmpty());
+        stack.push(1);
+        assertFalse(stack.isEmpty());
+        stack.pop();
+        assertTrue(stack.isEmpty());
     }
-
 }
